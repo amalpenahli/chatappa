@@ -1,10 +1,9 @@
-import 'package:chatapp/screen/privacy_message.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '../const/textstyle.dart';
 import '../provider/provider.dart';
 
@@ -16,20 +15,22 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController searchController = TextEditingController();
-
-  String name = "";
-
-  late final FirebaseFirestore _firestore;
-  late final FirebaseAuth _firebaseAuth;
-  late final CollectionReference userNameAgeCollection;
   late final User? currentUser;
+  String name = "";
+  TextEditingController searchController = TextEditingController();
+  late final CollectionReference userNameAgeCollection;
+  late final CollectionReference userFriendRequestCollection;
+
+  late final FirebaseAuth _firebaseAuth;
+  late final FirebaseFirestore _firestore;
 
   @override
   void initState() {
     _firestore = FirebaseFirestore.instance;
     _firebaseAuth = FirebaseAuth.instance;
     userNameAgeCollection = _firestore.collection("userNameAgeInfo");
+    userFriendRequestCollection = _firestore.collection("userFriendRequest");
+
     currentUser = _firebaseAuth.currentUser;
 
     super.initState();
@@ -39,6 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
           // The search area here
           title: Container(
         width: double.infinity,
@@ -86,105 +88,86 @@ class _SearchPageState extends State<SearchPage> {
                             as Map<String, dynamic>;
 
                         if (name.isEmpty) {
-                          return InkWell(
-                              onTap: () {
-                                Provider.of<MyProvider>(context, listen: false)
-                                    .nick = data["nick"];
-                                Provider.of<MyProvider>(context, listen: false)
-                                    .image = data["image"];
-                                Provider.of<MyProvider>(context, listen: false)
-                                    .uid = data["userUid"];
-                                    print( Provider.of<MyProvider>(context, listen: false)
-                                    .uid);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const PrivacyMessage()),
-                                );
-                              },
-                              child: currentUser!.uid == data["userUid"]
-                                  ? ListTile(
-                                      title: Row(
+                          return currentUser!.uid == data["userUid"]
+                              ? ListTile(
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(data["nick"],
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: searchPageNickStyle),
+                                      const SizedBox(width: 10),
+                                      Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            data["nick"],
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text("(you)",
-                                                  style: showAccountown),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              const Icon(
-                                                  FontAwesomeIcons.houseChimney)
-                                            ],
-                                          )
-                                        ],
-                                      ),
-
-                                      // subtitle: Text(
-                                      //   data["email"],
-                                      //   maxLines: 1,
-                                      //   overflow: TextOverflow.ellipsis,
-                                      //   style: const TextStyle(
-                                      //       color: Colors.black54,
-                                      //       fontSize: 16,
-                                      //       fontWeight: FontWeight.bold),
-                                      // ),
-                                      leading: CircleAvatar(
-                                        backgroundImage:
-                                            NetworkImage(data["image"]),
-                                      ),
-                                    )
-                                  : ListTile(
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            data["nick"],
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(width: 10),
+                                          Text("(you)", style: showAccountown),
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          IconButton(onPressed: (){}, icon:const Icon(FontAwesomeIcons.userPlus))
+                                          const Icon(
+                                              FontAwesomeIcons.houseChimney)
                                         ],
-                                      ),
+                                      )
+                                    ],
+                                  ),
 
-                                      // subtitle: Text(
-                                      //   data["email"],
-                                      //   maxLines: 1,
-                                      //   overflow: TextOverflow.ellipsis,
-                                      //   style: const TextStyle(
-                                      //       color: Colors.black54,
-                                      //       fontSize: 16,
-                                      //       fontWeight: FontWeight.bold),
-                                      // ),
-                                      leading: CircleAvatar(
-                                        backgroundImage:
-                                            NetworkImage(data["image"]),
+                                  // subtitle: Text(
+                                  //   data["email"],
+                                  //   maxLines: 1,
+                                  //   overflow: TextOverflow.ellipsis,
+                                  //   style: const TextStyle(
+                                  //       color: Colors.black54,
+                                  //       fontSize: 16,
+                                  //       fontWeight: FontWeight.bold),
+                                  // ),
+                                  leading: CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(data["image"]),
+                                  ),
+                                )
+                              : ListTile(
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(data["nick"],
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: searchPageNickStyle),
+                                      const SizedBox(width: 10),
+                                      const SizedBox(
+                                        width: 10,
                                       ),
-                                    ));
+                                      IconButton(
+                                          onPressed: () {
+                                            Provider.of<MyProvider>(context,
+                                                    listen: false)
+                                                .uidFriend = data["userUid"];
+
+                                            sendFriendRequest();
+                                          },
+                                          icon: const Icon(
+                                              FontAwesomeIcons.userPlus))
+                                    ],
+                                  ),
+
+                                  // subtitle: Text(
+                                  //   data["email"],
+                                  //   maxLines: 1,
+                                  //   overflow: TextOverflow.ellipsis,
+                                  //   style: const TextStyle(
+                                  //       color: Colors.black54,
+                                  //       fontSize: 16,
+                                  //       fontWeight: FontWeight.bold),
+                                  // ),
+                                  leading: CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(data["image"]),
+                                  ),
+                                );
                         }
                         if (data["nick"]
                             .toString()
@@ -200,10 +183,7 @@ class _SearchPageState extends State<SearchPage> {
                                         data["nick"],
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                        style: searchPageNickStyle,
                                       ),
                                       const SizedBox(width: 10),
                                       Row(
@@ -240,20 +220,20 @@ class _SearchPageState extends State<SearchPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        data["nick"],
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      Text(data["nick"],
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: searchPageNickStyle),
                                       const SizedBox(width: 10),
                                       const SizedBox(
                                         width: 10,
                                       ),
-                                      IconButton(onPressed: (){}, icon:const Icon(FontAwesomeIcons.userPlus))
+                                      IconButton(
+                                          onPressed: () {
+                                            setState(() {});
+                                          },
+                                          icon: const Icon(
+                                              FontAwesomeIcons.userPlus))
                                     ],
                                   ),
 
@@ -278,5 +258,18 @@ class _SearchPageState extends State<SearchPage> {
         },
       ),
     );
+  }
+
+  void sendFriendRequest() async {
+    await userNameAgeCollection
+        .doc(Provider.of<MyProvider>(context, listen: false).uidFriend)
+        .collection("userFriendRequest")
+        .doc(currentUser!.uid)
+        .set({
+      "fromNick": Provider.of<MyProvider>(context, listen: false).currentProfileNick,
+      "fromImage": Provider.of<MyProvider>(context, listen: false).currentProfileImage,
+      "fromUid": currentUser!.uid,
+      // "sendUid":Provider.of<MyProvider>(context, listen: false).uidFriend
+    });
   }
 }

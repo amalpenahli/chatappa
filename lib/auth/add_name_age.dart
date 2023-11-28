@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:chatapp/const/button_style.dart';
 import 'package:chatapp/const/textstyle.dart';
 import 'package:chatapp/screen/home_page.dart';
@@ -227,6 +226,7 @@ class _RegisterNameAgeState extends State<RegisterNameAge> {
                     child: ElevatedButton(
                         style: ButtonStylee.register,
                         onPressed: () async {
+                        
                           addNameAge();
                           SharedPreferences pref =
                               await SharedPreferences.getInstance();
@@ -255,15 +255,14 @@ class _RegisterNameAgeState extends State<RegisterNameAge> {
       "gender": gender.toString(),
       "email": emailController.text,
       "image": Provider.of<MyProvider>(context, listen: false).url,
-      "phone": Provider.of<MyProvider>(context, listen: false).phone
+      "phone": Provider.of<MyProvider>(context, listen: false).phone,
+      "uid": currentUser!.uid
     };
     userNameAgeCollection
         .doc(currentUser!.uid)
         .set(info, SetOptions(merge: true))
-        .whenComplete(() => {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => MyHomePage())),
-            });
+        .whenComplete(() => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => MyHomePage())),);
   }
 
   void _pickImageGallery() async {
@@ -289,4 +288,6 @@ class _RegisterNameAgeState extends State<RegisterNameAge> {
     print(Provider.of<MyProvider>(context, listen: false).url);
     print(_pickedImage);
   }
+
+  
 }

@@ -3,6 +3,13 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
+  emoji_picker_flutter
+  file_selector_windows
+  firebase_core
+  geolocator_windows
+  permission_handler_windows
+  rive_common
   smart_auth
 )
 

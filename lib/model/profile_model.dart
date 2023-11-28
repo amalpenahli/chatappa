@@ -13,7 +13,7 @@ class PofileModel {
 class ProfileData {
   static List profileDataList = [
     PofileModel(text: "Account", icon: const Icon(Icons.account_box)),
-    PofileModel(text: "Chats", icon: const Icon(Icons.chat)),
+    PofileModel(text: "Common Chats", icon: const Icon(Icons.chat)),
     PofileModel(
       text: "Notifications",
       icon: const Icon(Icons.notifications),

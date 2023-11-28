@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 InputDecoration registerName = InputDecoration(
   hintText: "please enter your name",
-
   enabledBorder: OutlineInputBorder(
       borderSide: const BorderSide(width: 2),
       borderRadius: BorderRadius.circular(10)),
@@ -40,3 +39,7 @@ InputDecoration usersNick = InputDecoration(
       borderSide: const BorderSide(width: 2),
       borderRadius: BorderRadius.circular(10)),
 );
+
+OutlineInputBorder messageContainer = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(20),
+    borderSide: const BorderSide(width: 1, color: Colors.transparent));
